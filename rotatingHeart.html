@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Little Something For You</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #040003;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+
+        /* ==========================================
+           BACKGROUND
+        ========================================== */
+        body {
+            background: radial-gradient(
+                circle at center,
+                #1e000c 0%,
+                #0d0005 50%,
+                #020001 100%
+            );
+        }
+
+        /* ==========================================
+           OPENING SCREEN
+        ========================================== */
+        #opening {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: radial-gradient(
+                circle,
+                #2b0014 0%,
+                #100006 45%,
+                #050002 100%
+            );
+            transition: opacity 1.5s ease, visibility 1.5s ease;
+        }
+
+        #opening.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .opening-content {
+            position: relative;
+            z-index: 2;
+            padding: 30px;
+        }
+
+        .small-text {
+            font-family: "Playfair Display", serif;
+            font-size: 18px;
+            font-style: italic;
+            color: #e9b3c8;
+            margin-bottom: 18px;
+        }
+
+        .opening-title {
+            font-family: "Playfair Display", serif;
+            font-size: clamp(40px, 6vw, 75px);
+            font-style: italic;
+            font-weight: 400;
+            margin-bottom: 12px;
+            text-shadow: 0 0 20px rgba(255, 70, 140, 0.5);
+        }
+
+        .opening-subtitle {
+            font-family: "Caveat", cursive;
+            font-size: 25px;
+            color: #ffc4da;
+            margin-bottom: 40px;
+        }
+
+        /* ==========================================
+           OPEN BUTTON
+        ========================================== */
+        #openButton {
+            border: 1px solid rgba(255, 160, 195, 0.7);
+            background: rgba(80, 0, 30, 0.5);
+            color: white;
+            padding: 15px 35px;
+            border-radius: 50px;
+            font-family: "Playfair Display", serif;
+            font-size: 17px;
+            cursor: pointer;
+            transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        #openButton:hover {
+            transform: scale(1.07);
+            background: rgba(150, 10, 70, 0.5);
+            box-shadow: 0 0 30px rgba(255, 60, 130, 0.35);
+        }
+
+        /* ==========================================
+           MAIN PAGE
+        ========================================== */
+        #mainPage {
+            position: fixed;
+            inset: 0;
+            opacity: 0;
+            transition: opacity 2s ease;
+            pointer-events: none;
+        }
+
+        #mainPage.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* ==========================================
+           TITLE
+        ========================================== */
+        .title {
+            position: fixed;
+            top: 35px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            z-index: 20;
+            font-size: clamp(28px, 4vw, 50px);
+            font-style: italic;
+            font-weight: 300;
+            text-shadow: 0 0 15px rgba(255, 100, 160, 0.3);
+        }
+
+        .subtitle {
+            position: fixed;
+            top: 95px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            z-index: 20;
+            font-size: 14px;
+            color: #ffd5e4;
+        }
+
+        /* ==========================================
+           LETTER
+        ========================================== */
+        .letter {
+            position: fixed;
+            right: 5%;
+            top: 50%;
+            transform: translateY(-50%) translateX(80px);
+            width: min(390px, 38vw);
+            max-height: 75vh;
+            overflow-y: auto;
+            padding: 30px;
+            background: rgba(25, 0, 12, 0.72);
+            border: 1px solid rgba(255, 150, 190, 0.25);
+            border-radius: 10px;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 0 35px rgba(255, 20, 110, 0.12);
+            z-index: 30;
+            opacity: 0;
+            transition: opacity 2s ease, transform 2s ease;
+            transition-delay: 1.5s;
+        }
+
+        .letter.show {
+            opacity: 1;
+            transform: translateY(-50%) translateX(0);
+        }
+
+        .letter h2 {
+            font-family: "Playfair Display", serif;
+            font-size: 24px;
+            font-style: italic;
+            font-weight: 400;
+            color: #ffb6d0;
+            margin-bottom: 20px;
+        }
+
+        .letter p {
+            font-family: "Caveat", cursive;
+            font-size: 21px;
+            line-height: 1.45;
+            color: #fff0f6;
+        }
+
+        .signature {
+            margin-top: 25px;
+            text-align: right;
+            font-family: "Caveat", cursive;
+            font-size: 26px;
+            color: #ff9fc5;
+        }
+
+        /* ==========================================
+           CLICK HEART
+        ========================================== */
+        .heart-hint {
+            position: fixed;
+            bottom: 35px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            z-index: 20;
+            font-family: "Caveat", cursive;
+            font-size: 20px;
+            color: #ffb3cc;
+            opacity: 0;
+            transition: opacity 2s ease;
+            transition-delay: 3s;
+        }
+
+        .heart-hint.show {
+            opacity: 1;
+        }
+
+        /* ==========================================
+           MOBILE
+        ========================================== */
+        @media (max-width: 850px) {
+            .title {
+                top: 22px;
+                font-size: 27px;
+            }
+
+            .subtitle {
+                top: 60px;
+            }
+
+            .letter {
+                right: 50%;
+                top: auto;
+                bottom: 15px;
+                width: 90%;
+                max-height: 43vh;
+                padding: 18px;
+                transform: translateX(50%) translateY(40px);
+            }
+
+            .letter.show {
+                transform: translateX(50%) translateY(0);
+            }
+
+            .letter h2 {
+                font-size: 20px;
+            }
+
+            .letter p {
+                font-size: 18px;
+            }
+
+            .signature {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <audio id="bgMusic" loop>
+        <source src="music.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- ==========================================
+         OPENING SCREEN
+    ========================================== -->
+    <div id="opening">
+        <div class="opening-content">
+            <div class="small-text">
+                I made something for you...
+            </div>
+            <div class="opening-title">
+                My Love
+            </div>
+            <div class="opening-subtitle">
+                Just a little something from my heart ♡
+            </div>
+            <button id="openButton">
+                Open this for me
+            </button>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         MAIN PAGE
+    ========================================== -->
+    <div id="mainPage">
+        <div class="title">
+            Love Heart For Her
+        </div>
+        <div class="subtitle">
+            this is for you
+        </div>
+
+        <!-- LOVE LETTER -->
+        <div class="letter" id="letter">
+            <h2>To the girl who has my heart,</h2>
+            <p>
+                I don't think words will ever be enough to explain how much you mean to me.
+                <br><br>
+                Somehow, you make ordinary moments feel special. Your text can turn a bad day around, and just knowing you're there makes everything feel a little brighter.
+                <br><br>
+                I made this little heart for you because I wanted something that could remind you of just how special you are to me.
+                <br><br>
+                No matter where life takes us, I hope you always remember that you are deeply appreciated, cared for and loved. Even when life decides to separate our paths, I hope you'll always remember this heart and smile.
+                <br><br>
+                Thank you for being you.
+            </p>
+            <div class="signature">
+                — Your Zavi ♡
+            </div>
+        </div>
+
+        <div class="heart-hint" id="heartHint">
+            made with a little bit of love ♡
+        </div>
+    </div>
+
+    <!-- THREE.JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <script>
+        /* ==========================================
+           OPEN BUTTON & AUDIO
+        ========================================== */
+        const opening = document.getElementById("opening");
+        const mainPage = document.getElementById("mainPage");
+        const openButton = document.getElementById("openButton");
+        const letter = document.getElementById("letter");
+        const heartHint = document.getElementById("heartHint");
+        const bgMusic = document.getElementById("bgMusic");
+
+        openButton.addEventListener("click", function () {
+            opening.classList.add("hidden");
+            mainPage.classList.add("visible");
+
+            setTimeout(function () {
+                letter.classList.add("show");
+                heartHint.classList.add("show");
+            }, 100);
+
+            bgMusic.volume = 0.5;
+            bgMusic.play().catch(function (error) {
+                console.warn("Audio autoplay couldn't start:", error);
+            });
+        });
+
+        /* ==========================================
+           THREE.JS SCENE SETUP
+        ========================================== */
+        const scene = new THREE.Scene();
+
+        const camera = new THREE.PerspectiveCamera(
+            45,
+            window.innerWidth / window.innerHeight,
+            0.1,
+            1000
+        );
+        camera.position.z = 18;
+
+        const renderer = new THREE.WebGLRenderer({
+            antialias: true,
+            alpha: true
+        });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        document.body.appendChild(renderer.domElement);
+
+        /* ==========================================
+           LIGHTING
+        ========================================== */
+        const ambientLight = new THREE.AmbientLight(0xffb5d0, 1.2);
+        scene.add(ambientLight);
+
+        const keyLight = new THREE.DirectionalLight(0xffffff, 3.2);
+        keyLight.position.set(5, 7, 8);
+        scene.add(keyLight);
+
+        const fillLight = new THREE.DirectionalLight(0xff3388, 2.5);
+        fillLight.position.set(-6, -3, -4);
+        scene.add(fillLight);
+
+        const frontPoint = new THREE.PointLight(0xff85b5, 2.5, 25);
+        frontPoint.position.set(0, 0, 7);
+        scene.add(frontPoint);
+
+        /* ==========================================
+           PARAMETRIC 3D CRYSTAL HEART
+        ========================================== */
+        function createCrystalHeartGeometry() {
+            const uSteps = 22;
+            const vSteps = 14;
+            const positions = [];
+
+            function getHeartPoint(u, v) {
+                const sinU = Math.sin(u);
+                const cosU = Math.cos(u);
+
+                // Parametric 3D cardioid heart formulas
+                const x = 1.6 * Math.pow(sinU, 3) * Math.cos(v);
+                const y = (1.3 * cosU - 0.5 * Math.cos(2 * u) - 0.2 * Math.cos(3 * u) - 0.1 * Math.cos(4 * u)) * Math.cos(v);
+                const z = Math.sin(v) * 0.9 * (1.1 - Math.abs(x) * 0.35);
+
+                return new THREE.Vector3(x * 1.7, y * 1.7, z * 1.7);
+            }
+
+            for (let i = 0; i < uSteps; i++) {
+                for (let j = 0; j < vSteps; j++) {
+                    const u1 = (i / uSteps) * Math.PI * 2;
+                    const u2 = ((i + 1) / uSteps) * Math.PI * 2;
+                    const v1 = (j / vSteps) * Math.PI - Math.PI / 2;
+                    const v2 = ((j + 1) / vSteps) * Math.PI - Math.PI / 2;
+
+                    const p1 = getHeartPoint(u1, v1);
+                    const p2 = getHeartPoint(u2, v1);
+                    const p3 = getHeartPoint(u1, v2);
+                    const p4 = getHeartPoint(u2, v2);
+
+                    // Face 1
+                    positions.push(p1.x, p1.y, p1.z);
+                    positions.push(p2.x, p2.y, p2.z);
+                    positions.push(p3.x, p3.y, p3.z);
+
+                    // Face 2
+                    positions.push(p2.x, p2.y, p2.z);
+                    positions.push(p4.x, p4.y, p4.z);
+                    positions.push(p3.x, p3.y, p3.z);
+                }
+            }
+
+            const geometry = new THREE.BufferGeometry();
+            geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+            geometry.computeVertexNormals();
+            geometry.center();
+            return geometry;
+        }
+
+        const heartGeometry = createCrystalHeartGeometry();
+
+        const heartMaterial = new THREE.MeshStandardMaterial({
+            color: 0xff66a3,
+            roughness: 0.1,
+            metalness: 0.15,
+            flatShading: true,
+            transparent: true,
+            opacity: 0.92,
+            side: THREE.DoubleSide
+        });
+
+        const heart = new THREE.Mesh(heartGeometry, heartMaterial);
+        heart.position.x = -2.5;
+        scene.add(heart);
+
+        /* ==========================================
+           BACKGROUND PARTICLES
+        ========================================== */
+        const particleCount = 2000;
+        const particlePositions = new Float32Array(particleCount * 3);
+
+        for (let i = 0; i < particleCount; i++) {
+            const i3 = i * 3;
+            particlePositions[i3] = (Math.random() - 0.5) * 35;
+            particlePositions[i3 + 1] = (Math.random() - 0.5) * 22;
+            particlePositions[i3 + 2] = (Math.random() - 0.5) * 15;
+        }
+
+        const particlesGeometry = new THREE.BufferGeometry();
+        particlesGeometry.setAttribute("position", new THREE.BufferAttribute(particlePositions, 3));
+
+        const particlesMaterial = new THREE.PointsMaterial({
+            color: 0xff6699,
+            size: 0.04,
+            transparent: true,
+            opacity: 0.7,
+            depthWrite: false
+        });
+
+        const particles = new THREE.Points(particlesGeometry, particlesMaterial);
+        scene.add(particles);
+
+        /* ==========================================
+           HEART SPARKLE RIBBON
+        ========================================== */
+        const sparkleCount = 1300;
+        const sparklePositions = new Float32Array(sparkleCount * 3);
+
+        for (let i = 0; i < sparkleCount; i++) {
+            const t = Math.random() * Math.PI * 2;
+            const scale = Math.sqrt(Math.random());
+            const x = 16 * Math.pow(Math.sin(t), 3);
+            const y = 13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t);
+
+            const i3 = i * 3;
+            sparklePositions[i3] = x * scale * 0.22 - 2.5;
+            sparklePositions[i3 + 1] = y * scale * 0.22;
+            sparklePositions[i3 + 2] = (Math.random() - 0.5) * 2.5;
+        }
+
+        const sparkleGeometry = new THREE.BufferGeometry();
+        sparkleGeometry.setAttribute("position", new THREE.BufferAttribute(sparklePositions, 3));
+
+        const sparkleMaterial = new THREE.PointsMaterial({
+            color: 0xffb5d6,
+            size: 0.05,
+            transparent: true,
+            opacity: 0.9,
+            depthWrite: false
+        });
+
+        const sparkles = new THREE.Points(sparkleGeometry, sparkleMaterial);
+        scene.add(sparkles);
+
+        /* ==========================================
+           ANIMATION
+        ========================================== */
+        const clock = new THREE.Clock();
+
+        function animate() {
+            requestAnimationFrame(animate);
+            const time = clock.getElapsedTime();
+
+            // Heart rotation & floating
+            heart.rotation.y = time * 0.65;
+            heart.rotation.x = Math.sin(time * 0.7) * 0.05;
+            heart.position.y = Math.sin(time * 1.2) * 0.18;
+
+            // Background subtle float
+            particles.rotation.y = time * 0.015;
+            particles.rotation.x = Math.sin(time * 0.2) * 0.02;
+
+            // Swirling particles
+            sparkles.rotation.y = time * 0.65;
+            sparkles.position.y = heart.position.y;
+
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+        /* ==========================================
+           RESIZE
+        ========================================== */
+        window.addEventListener("resize", function () {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+</html>
